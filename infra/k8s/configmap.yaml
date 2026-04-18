@@ -3,8 +3,7 @@ kind: ConfigMap
 metadata:
   name: ai-chat-config
 data:
-  APP_HOST: __APP_HOST__
-  FRONTEND_ORIGIN: https://__APP_HOST__
+  FRONTEND_ORIGIN: "*"
   OBJECT_STORAGE_BUCKET: ai-chat-archive
   OBJECT_STORAGE_ENDPOINT: https://us-east-1.linodeobjects.com
   LLM_BASE_URL: http://vllm-service.__NAMESPACE__.svc.cluster.local:8000/v1

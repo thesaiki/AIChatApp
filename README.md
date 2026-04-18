@@ -22,7 +22,6 @@ You need these created outside this repository before the deployment workflow ca
 - An Akamai LKE cluster
 - An Akamai API token with access to the LKE cluster
 - A PostgreSQL connection string
-- A public DNS hostname pointed at your LKE ingress load balancer
 - A GitHub repository with Actions enabled
 
 ## Required GitHub configuration
@@ -44,7 +43,6 @@ Optional secrets:
 
 Create these repository variables:
 
-- `APP_HOST`: DNS name for the app, for example `chat.example.com`
 - `K8S_NAMESPACE`: defaults to `ai-chat` if omitted
 - `OBJECT_STORAGE_BUCKET`: defaults to `ai-chat-archive` if omitted
 - `OBJECT_STORAGE_ENDPOINT`: defaults to `https://us-east-1.linodeobjects.com` if omitted
@@ -57,6 +55,12 @@ Create these repository variables:
 - The default backend Redis connection string is `redis://redis:6379`.
 
 For production, this Redis setup is a pragmatic starter. If you later move to a managed cache or a highly available Redis topology, update `REDIS_URL` in [`infra/k8s/configmap.yaml`](/Users/sanair/Documents/Akamai%20AI%20Chat%20App/infra/k8s/configmap.yaml).
+
+## Development Access
+
+- The default ingress is configured for IP-based development and does not require a hostname.
+- Once deployed, you can access the app through the ingress controller external IP over HTTP.
+- When you are ready for a real domain and TLS, add a host-based ingress rule back into [`infra/k8s/ingress.yaml`](/Users/sanair/Documents/Akamai%20AI%20Chat%20App/infra/k8s/ingress.yaml) and tighten `FRONTEND_ORIGIN` in [`infra/k8s/configmap.yaml`](/Users/sanair/Documents/Akamai%20AI%20Chat%20App/infra/k8s/configmap.yaml).
 
 ## Deployment flow
 

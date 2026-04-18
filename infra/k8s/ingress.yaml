@@ -8,8 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: __APP_HOST__
-      http:
+    - http:
         paths:
           - path: /ws
             pathType: Prefix

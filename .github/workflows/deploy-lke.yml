@@ -12,7 +12,6 @@ env:
   FRONTEND_IMAGE_NAME: ${{ github.repository_owner }}/ai-chat-frontend
   BACKEND_IMAGE_NAME: ${{ github.repository_owner }}/ai-chat-backend
   K8S_NAMESPACE: ${{ vars.K8S_NAMESPACE || 'ai-chat' }}
-  APP_HOST: ${{ vars.APP_HOST }}
   OBJECT_STORAGE_BUCKET: ${{ vars.OBJECT_STORAGE_BUCKET || 'ai-chat-archive' }}
   OBJECT_STORAGE_ENDPOINT: ${{ vars.OBJECT_STORAGE_ENDPOINT || 'https://us-east-1.linodeobjects.com' }}
   LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
@@ -111,11 +110,6 @@ jobs:
           BACKEND_IMAGE: ${{ steps.meta.outputs.backend }}
           FRONTEND_IMAGE: ${{ steps.meta.outputs.frontend }}
         run: |
-          if [ -z "${APP_HOST}" ]; then
-            echo "APP_HOST repository variable is required."
-            exit 1
-          fi
-
           EFFECTIVE_LLM_BASE_URL="${LLM_BASE_URL:-http://vllm-service.${K8S_NAMESPACE}.svc.cluster.local:8000/v1}"
           cp -R infra/k8s "${RUNNER_TEMP}/k8s"
           find "${RUNNER_TEMP}/k8s" -name '*.yaml' -type f -exec \
@@ -123,7 +117,6 @@ jobs:
             -e "s|__BACKEND_IMAGE__|${BACKEND_IMAGE}|g" \
             -e "s|__FRONTEND_IMAGE__|${FRONTEND_IMAGE}|g" \
             -e "s|__NAMESPACE__|${K8S_NAMESPACE}|g" \
-            -e "s|__APP_HOST__|${APP_HOST}|g" \
             -e "s|OBJECT_STORAGE_BUCKET: ai-chat-archive|OBJECT_STORAGE_BUCKET: ${OBJECT_STORAGE_BUCKET}|g" \
             -e "s|OBJECT_STORAGE_ENDPOINT: https://us-east-1.linodeobjects.com|OBJECT_STORAGE_ENDPOINT: ${OBJECT_STORAGE_ENDPOINT}|g" \
             -e "s|LLM_BASE_URL: http://vllm-service.${K8S_NAMESPACE}.svc.cluster.local:8000/v1|LLM_BASE_URL: ${EFFECTIVE_LLM_BASE_URL}|g" \
