@@ -6,6 +6,14 @@ type ChatMessage = {
   content: string;
 };
 
+function createId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
 function createSocketUrl(sessionId: string) {
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
   return `${protocol}://${window.location.host}/ws?sessionId=${encodeURIComponent(sessionId)}`;
@@ -18,7 +26,7 @@ export function App() {
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const sessionId = window.crypto.randomUUID();
+    const sessionId = createId();
     const socket = new WebSocket(createSocketUrl(sessionId));
 
     socket.addEventListener("open", () => {
@@ -33,7 +41,7 @@ export function App() {
       try {
         const payload = JSON.parse(event.data as string);
         const nextMessage: ChatMessage = {
-          id: window.crypto.randomUUID(),
+          id: createId(),
           role: payload.type === "system" ? "system" : "assistant",
           content: payload.message ?? String(event.data)
         };
@@ -42,7 +50,7 @@ export function App() {
         setMessages((current) => [
           ...current,
           {
-            id: window.crypto.randomUUID(),
+            id: createId(),
             role: "assistant",
             content: String(event.data)
           }
@@ -64,7 +72,7 @@ export function App() {
     setMessages((current) => [
       ...current,
       {
-        id: window.crypto.randomUUID(),
+        id: createId(),
         role: "user",
         content: value
       }
