@@ -97,12 +97,19 @@ jobs:
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Create registry pull secret when GHCR packages are private
-        if: ${{ secrets.GHCR_PULL_USERNAME != '' && secrets.GHCR_PULL_TOKEN != '' }}
+        env:
+          GHCR_PULL_USERNAME: ${{ secrets.GHCR_PULL_USERNAME }}
+          GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
         run: |
+          if [ -z "${GHCR_PULL_USERNAME}" ] || [ -z "${GHCR_PULL_TOKEN}" ]; then
+            echo "Skipping GHCR pull secret creation because optional GHCR credentials are not configured."
+            exit 0
+          fi
+
           kubectl -n "${K8S_NAMESPACE}" create secret docker-registry ghcr-creds \
             --docker-server="${REGISTRY}" \
-            --docker-username="${{ secrets.GHCR_PULL_USERNAME }}" \
-            --docker-password="${{ secrets.GHCR_PULL_TOKEN }}" \
+            --docker-username="${GHCR_PULL_USERNAME}" \
+            --docker-password="${GHCR_PULL_TOKEN}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Render manifests with deployment values
