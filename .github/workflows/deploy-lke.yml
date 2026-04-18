@@ -76,6 +76,22 @@ jobs:
             | base64 --decode > "${RUNNER_TEMP}/kubeconfig"
           echo "KUBECONFIG=${RUNNER_TEMP}/kubeconfig" >> "$GITHUB_ENV"
 
+      - name: Normalize workflow inputs
+        run: |
+          CLEAN_NAMESPACE="$(printf '%s' "${K8S_NAMESPACE}" | tr -d '\r\n')"
+          CLEAN_OBJECT_STORAGE_BUCKET="$(printf '%s' "${OBJECT_STORAGE_BUCKET}" | tr -d '\r\n')"
+          CLEAN_OBJECT_STORAGE_ENDPOINT="$(printf '%s' "${OBJECT_STORAGE_ENDPOINT}" | tr -d '\r\n')"
+          CLEAN_LLM_BASE_URL="$(printf '%s' "${LLM_BASE_URL}" | tr -d '\r\n')"
+
+          if [ -z "${CLEAN_NAMESPACE}" ]; then
+            CLEAN_NAMESPACE="ai-chat"
+          fi
+
+          echo "K8S_NAMESPACE=${CLEAN_NAMESPACE}" >> "$GITHUB_ENV"
+          echo "OBJECT_STORAGE_BUCKET=${CLEAN_OBJECT_STORAGE_BUCKET}" >> "$GITHUB_ENV"
+          echo "OBJECT_STORAGE_ENDPOINT=${CLEAN_OBJECT_STORAGE_ENDPOINT}" >> "$GITHUB_ENV"
+          echo "LLM_BASE_URL=${CLEAN_LLM_BASE_URL}" >> "$GITHUB_ENV"
+
       - name: Create namespace
         run: |
           kubectl create namespace "${K8S_NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
