@@ -4,6 +4,8 @@ namespace: __NAMESPACE__
 resources:
   - namespace.yaml
   - configmap.yaml
+  - redis-statefulset.yaml
+  - redis-service.yaml
   - backend-deployment.yaml
   - backend-service.yaml
   - frontend-deployment.yaml

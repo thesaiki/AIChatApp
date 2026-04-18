@@ -36,16 +36,16 @@ spec:
                 configMapKeyRef:
                   name: ai-chat-config
                   key: OBJECT_STORAGE_ENDPOINT
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ai-chat-config
+                  key: REDIS_URL
             - name: POSTGRES_URL
               valueFrom:
                 secretKeyRef:
                   name: ai-chat-secrets
                   key: POSTGRES_URL
-            - name: REDIS_URL
-              valueFrom:
-                secretKeyRef:
-                  name: ai-chat-secrets
-                  key: REDIS_URL
             - name: SESSION_SECRET
               valueFrom:
                 secretKeyRef:

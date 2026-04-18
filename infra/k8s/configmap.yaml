@@ -8,3 +8,4 @@ data:
   OBJECT_STORAGE_BUCKET: ai-chat-archive
   OBJECT_STORAGE_ENDPOINT: https://us-east-1.linodeobjects.com
   LLM_BASE_URL: http://vllm-service.__NAMESPACE__.svc.cluster.local:8000/v1
+  REDIS_URL: redis://redis:6379

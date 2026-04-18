@@ -84,7 +84,6 @@ jobs:
       - name: Create application secrets
         env:
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-          REDIS_URL: ${{ secrets.REDIS_URL }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           OBJECT_STORAGE_ACCESS_KEY: ${{ secrets.OBJECT_STORAGE_ACCESS_KEY }}
           OBJECT_STORAGE_SECRET_KEY: ${{ secrets.OBJECT_STORAGE_SECRET_KEY }}
@@ -92,7 +91,6 @@ jobs:
         run: |
           kubectl -n "${K8S_NAMESPACE}" create secret generic ai-chat-secrets \
             --from-literal=POSTGRES_URL="${POSTGRES_URL}" \
-            --from-literal=REDIS_URL="${REDIS_URL}" \
             --from-literal=SESSION_SECRET="${SESSION_SECRET}" \
             --from-literal=OBJECT_STORAGE_ACCESS_KEY="${OBJECT_STORAGE_ACCESS_KEY}" \
             --from-literal=OBJECT_STORAGE_SECRET_KEY="${OBJECT_STORAGE_SECRET_KEY}" \

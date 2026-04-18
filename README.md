@@ -11,6 +11,7 @@ The repo is intentionally split into two layers:
 
 - `frontend`: a simple React/Vite chat client
 - `backend`: an Express + WebSocket service with health checks and placeholder agent loop wiring
+- `redis`: an in-cluster Redis stateful service for session fan-out and cache primitives
 - `ingress`: path-based routing for `/`, `/api`, and `/ws`
 - `optional/vllm-gpu-deployment.yaml`: an optional self-hosted inference pod for a GPU node pool
 
@@ -21,7 +22,6 @@ You need these created outside this repository before the deployment workflow ca
 - An Akamai LKE cluster
 - An Akamai API token with access to the LKE cluster
 - A PostgreSQL connection string
-- A Redis connection string
 - A public DNS hostname pointed at your LKE ingress load balancer
 - A GitHub repository with Actions enabled
 
@@ -32,7 +32,6 @@ Create these repository secrets:
 - `LINODE_TOKEN`: Akamai / Linode API token
 - `LKE_CLUSTER_ID`: numeric cluster ID
 - `POSTGRES_URL`: connection string for managed PostgreSQL
-- `REDIS_URL`: connection string for managed Redis
 - `SESSION_SECRET`: random secret for session signing
 - `OBJECT_STORAGE_ACCESS_KEY`: Akamai Object Storage access key
 - `OBJECT_STORAGE_SECRET_KEY`: Akamai Object Storage secret key
@@ -50,6 +49,14 @@ Create these repository variables:
 - `OBJECT_STORAGE_BUCKET`: defaults to `ai-chat-archive` if omitted
 - `OBJECT_STORAGE_ENDPOINT`: defaults to `https://us-east-1.linodeobjects.com` if omitted
 - `LLM_BASE_URL`: defaults to `http://vllm-service.ai-chat.svc.cluster.local:8000/v1` if omitted
+
+## Database setup
+
+- PostgreSQL is expected to be an Akamai Managed Database and is supplied through the `POSTGRES_URL` GitHub secret.
+- Redis is deployed inside the Kubernetes cluster by default as a single-replica `StatefulSet` exposed as the `redis` service on port `6379`.
+- The default backend Redis connection string is `redis://redis:6379`.
+
+For production, this Redis setup is a pragmatic starter. If you later move to a managed cache or a highly available Redis topology, update `REDIS_URL` in [`infra/k8s/configmap.yaml`](/Users/sanair/Documents/Akamai%20AI%20Chat%20App/infra/k8s/configmap.yaml).
 
 ## Deployment flow
 
